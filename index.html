@@ -1486,14 +1486,14 @@
             </thead>
             <tbody>
               <tr><td><code>billing.total_cost_cny</code></td><td>number</td><td>LLM 调用成本合计（元）</td></tr>
-              <tr><td><code>billing.calls</code></td><td>array</td><td>每次 LLM 调用明细：<code>provider</code>（渠道 ID，取值见 <a href="#llm-providers">LLM 调用方式 · ③ 渠道总览</a>，如 deepseek/glm/apiyi/jikexin/megaby/linguanya/liantong/sta1n/barael/xingwangai）、<code>model</code>、<code>input_tokens</code>、<code>output_tokens</code>、<code>cache_read_tokens</code>、<code>cache_write_tokens</code>、<code>cost_cny</code>、<code>tier</code>（计价分档：按量模型为输入长度分档；按次模型固定为 <code>per_call</code>）、<code>pricing_status</code>、<code>episode_no</code>（分镜组类模块按集归属，见下）</td></tr>
+              <tr><td><code>billing.calls</code></td><td>array</td><td>每次 LLM 调用明细：<code>provider</code>（渠道 ID，取值见 <a href="#llm-providers">LLM 调用方式 · ③ 渠道总览</a>，如 deepseek/glm/apiyi/jikexin/megaby/linguanya/liantong/sta1n/barael/xingwangai/xiaosheng；<code>deepseek</code> / <code>glm</code> 渠道的调用 2026-10-20 起记为 <code>xiaosheng</code>，触发官方保底时仍记 <code>deepseek</code> / <code>glm</code>）、<code>model</code>、<code>input_tokens</code>、<code>output_tokens</code>、<code>cache_read_tokens</code>、<code>cache_write_tokens</code>、<code>cost_cny</code>、<code>tier</code>（计价分档：按量模型为输入长度分档；按次模型固定为 <code>per_call</code>）、<code>pricing_status</code>、<code>episode_no</code>（分镜组类模块按集归属，见下）</td></tr>
               <tr><td><code>billing.pricing_status</code></td><td>string</td><td><code>ok</code>=全部计价成功；<code>partial</code>=存在未录入单价表的渠道×模型（对应 call 的 <code>cost_cny</code> 为 <code>null</code>）；<code>no_llm_calls</code>=未发生 LLM 调用（此时不附 <code>billing</code> 字段）</td></tr>
               <tr><td><code>billing.as_of</code></td><td>string</td><td>单价表基准日期（以服务端返回值为准，当前为 <code>2026-09-18</code>）</td></tr>
             </tbody>
           </table>
         </div>
         <ul>
-          <li>单价按 <strong>渠道×模型</strong> 键控（同一模型在不同渠道价格不同），当前已录入 31 条：API易（gpt-5.6-sol 动态分档 ≤272K / &gt;272K，USD 计价；gemini-3.8-flash）、即刻API 3 条、MegaAI 3 条、灵感鸭 3 条、联通 3 条、DeepSeek 2 条、GLM 2 条、STA1N 7 条（含按次 4 条）、barael 1 条、星网AI 5 条（gemini-3.8-flash 为渠道价；GPT-6 / DeepSeek 四款按厂商官方标准价 USD 登记）；各渠道具体单价见服务端计价表。</li>
+          <li>单价按 <strong>渠道×模型</strong> 键控（同一模型在不同渠道价格不同），当前已录入 35 条：API易（gpt-5.6-sol 动态分档 ≤272K / &gt;272K，USD 计价；gemini-3.8-flash）、即刻API 3 条、MegaAI 3 条、灵感鸭 3 条、联通 3 条、DeepSeek 2 条、GLM 2 条（官方价，保留作回滚）、小生 4 条（deepseek-v4-pro / deepseek-v4-flash / glm-5.3 / glm-5.3-flash，官方价 × 0.08）、STA1N 7 条（含按次 4 条）、barael 1 条、星网AI 5 条（gemini-3.8-flash 为渠道价；GPT-6 / DeepSeek 四款按厂商官方标准价 USD 登记）；各渠道具体单价见服务端计价表。</li>
           <li><strong>按次计费模型</strong>（如 STA1N 的 <code>[次]…</code> 系列）：每次成功调用固定计 <code>单价 × 渠道倍率</code>，与 token 数无关，对应 call 的 <code>tier=per_call</code>；token 字段仍如实返回，仅供参考。</li>
           <li>未录入单价表的模型（如豆包、千问）<code>cost_cny</code> 为 <code>null</code>，不参与合计（<code>pricing_status=partial</code>）。</li>
           <li><strong>同步接口</strong>：<code>data.billing</code> 为本次请求全部 LLM 调用的汇总（含任务内并发执行的部分）。</li>
@@ -1586,12 +1586,12 @@
           <table>
             <thead><tr><th><code>llm_provider</code></th><th>渠道</th><th>别名</th><th>模型族</th><th>只传模型能否自动路由到本渠道</th><th>服务端 <code>.env</code></th><th>自动降级开关</th></tr></thead>
             <tbody>
-              <tr><td><code>deepseek</code></td><td>DeepSeek 官方</td><td>—</td><td>V4 Pro / Flash</td><td>能（<code>deepseek-*</code>）</td><td><code>DEEPSEEK_API_KEY</code></td><td><code>ALLOW_DEEPSEEK_FALLBACK</code></td></tr>
+              <tr><td><code>deepseek</code></td><td>DeepSeek（2026-10-20 起经小生 xiaoshengapi.top）</td><td>—</td><td>V4 Pro / Flash</td><td>能（<code>deepseek-*</code>）</td><td><code>DEEPSEEK_API_KEY</code></td><td><code>ALLOW_DEEPSEEK_FALLBACK</code></td></tr>
               <tr><td><code>doubao</code></td><td>豆包 / 火山方舟</td><td>—</td><td>Seed 2.0 / 2.1</td><td>能（<code>doubao-*</code>）</td><td><code>DOUBAO_API_KEY</code></td><td><code>ALLOW_DOUBAO_FALLBACK</code></td></tr>
               <tr><td><code>apiyi</code></td><td>API易</td><td><code>claude</code>（历史兼容值）</td><td>Claude、GPT-5.6</td><td>能（<code>claude-*</code>、<code>gpt-5.6-*</code> 默认归此）</td><td><code>APIYI_API_KEY</code></td><td><code>ALLOW_CLAUDE_FALLBACK</code></td></tr>
               <tr><td><code>gemini</code></td><td>API易 Gemini 原生</td><td>—</td><td>Gemini 3.8 Flash</td><td>能（<code>gemini-*</code> 默认归此）</td><td><code>APIYI_API_KEY</code> / <code>GEMINI_API_KEY</code></td><td><code>ALLOW_GEMINI_FALLBACK</code></td></tr>
               <tr><td><code>jikexin</code></td><td>即刻API（geekapis.com）</td><td>—</td><td>GPT-5.6 / GPT-6、<code>gemini-3.8-flash-high</code></td><td>部分（<code>gpt-6-*</code>、<code>gemini-3.8-flash-high</code>）</td><td><code>JIKEXIN_API_KEY</code></td><td><code>ALLOW_JIKEXIN_FALLBACK</code></td></tr>
-              <tr><td><code>glm</code></td><td>智谱 BigModel 官方</td><td><code>zhipu</code> / <code>bigmodel</code></td><td>GLM-5.3</td><td>能（<code>glm-*</code>）</td><td><code>GLM_API_KEY</code></td><td><code>ALLOW_GLM_FALLBACK</code></td></tr>
+              <tr><td><code>glm</code></td><td>智谱 GLM（2026-10-20 起经小生 xiaoshengapi.top）</td><td><code>zhipu</code> / <code>bigmodel</code></td><td>GLM-5.3</td><td>能（<code>glm-*</code>）</td><td><code>GLM_API_KEY</code></td><td><code>ALLOW_GLM_FALLBACK</code></td></tr>
               <tr><td><code>megaby</code></td><td>MegaAI（newapi.megabyai.cc）</td><td><code>megabyai</code> / <code>megaai</code> / <code>mega</code></td><td>GPT-5.6 / GPT-6、<code>claude-opus-5</code></td><td>否，须显式传</td><td><code>MEGA_AI_API_KEY</code></td><td><code>ALLOW_MEGABY_FALLBACK</code></td></tr>
               <tr><td><code>linguanya</code></td><td>灵感鸭（lingganyaapi.com）</td><td><code>lingganya</code> / <code>lingganyaapi</code></td><td>GPT-5.6 / GPT-6、Gemini 3.8 Flash</td><td>否，须显式传</td><td><code>LINGUANYA_API_KEY</code>（Gemini 用 <code>LINGUANYA_GEMINI_API_KEY</code>）</td><td><code>ALLOW_LINGUANYA_FALLBACK</code></td></tr>
               <tr><td><code>liantong</code></td><td>联通 LIANTONG（liantongapi.com）</td><td><code>liantongapi</code> / <code>联通</code></td><td>GPT-5.6 / GPT-6、Gemini 3.8 Flash</td><td>否，须显式传</td><td><code>LIANTONG_API_KEY</code></td><td><code>ALLOW_LIANTONG_FALLBACK</code></td></tr>
@@ -1635,7 +1635,15 @@
           <li>不传 <code>llm_*</code> 时，服务端默认使用 **DeepSeek <code>deepseek-v4-pro</code>（非思考）**。</li>
           <li>首选渠道出现网络类错误（超时 / DNS / TLS / 代理 / 5xx / 429）或空响应时，按固定顺序降级到<strong>已显式开启</strong>的备用渠道；当前部署默认仅 <strong>GLM</strong>（<code>ALLOW_GLM_FALLBACK=1</code>）参与降级。</li>
           <li>其余渠道（含豆包 / Qwen / Claude 及所有中转站渠道）默认<strong>不参与</strong>降级链，需在 <code>.env</code> 显式设置对应 <code>ALLOW_*_FALLBACK=1</code>（开关名见 ③）。代理 403 的临时补链同样遵循该开关。</li>
-          <li>业务类错误（401 / 400 参数错误 / 余额不足）不会自动切换渠道，保留原始错误便于排查。</li>
+          <li>业务类错误（401 / 400 参数错误 / 余额不足）不会自动切换渠道，保留原始错误便于排查（小生自身的 401 / 余额不足属于下条「官方保底」范围，不切渠道、只在本渠道内改发官方）。</li>
+          <li><strong>小生 → 官方保底（2026-10-20 起，仅 <code>deepseek</code> / <code>glm</code>）</strong>：这两个渠道经小生调用；小生本身不可用时，<strong>同模型、同参数改发官方一次</strong>，发生在渠道内部，先于上面的降级链。
+            <ul>
+              <li>切官方：连接 / DNS / TLS / 代理失败、5xx、429 限流、401 / 402 / 403、余额不足、空返回、网关报错包类假成功；</li>
+              <li>不切：超时（避免耗时翻倍）、400 参数错误、内容审核拦截、结构化拒答；</li>
+              <li>熔断：同一渠道连续 3 次切官方后，5 分钟内直接走官方；到期先试小生，成功即恢复；</li>
+              <li>走官方的调用 <code>billing.calls[].provider</code> 记为 <code>deepseek</code> / <code>glm</code>，按官方原价计费；官方也失败时返回官方的错误，再按降级链处理。</li>
+            </ul>
+          </li>
         </ul>
 
         <h3 id="llm-models">⑥ 各渠道 <code>llm_model</code> 可选值</h3>
@@ -1652,6 +1660,7 @@
         <ul>
           <li>服务端显式下发 <code>thinking.disabled</code>。</li>
           <li>结构化调用不发送 <code>response_format=json_object</code>（规避偶发空正文）。正文为空时先原参数重试一次，仍为空再按降级链切换；链上无候选则硬失败。</li>
+          <li><strong>2026-10-20 起经小生渠道（xiaoshengapi.top）调用</strong>：<code>llm_provider</code> / <code>llm_model</code> 取值与行为不变；<code>billing.calls[].provider</code> 记为 <code>xiaosheng</code>，单价为官方价 × 0.08；小生不可用时自动改发官方（见 <a href="#llm-fallback">⑤「小生 → 官方保底」</a>），此时记为原渠道名、按官方价计费。</li>
         </ul>
         <h4 id="llm-models-2">⑥-2 豆包（<code>doubao</code>）</h4>
         <div class="table-wrap">
@@ -1730,6 +1739,7 @@
         <ul>
           <li>思考<strong>不可关闭</strong>；后缀 <code>-low</code> / <code>-high</code> / <code>-max</code> 控制强度，不带后缀默认 <code>high</code>（<code>.env</code> 的 <code>GLM_REASONING_EFFORT</code> 可覆盖）。旧中文标注（<code>（快速）</code>/<code>（标准）</code>/<code>（深度）</code>）保留兼容。</li>
           <li>服务端不下发 <code>response_format</code>，结构化输出靠提示词约束 + 本地 JSON 修复。</li>
+          <li><strong>2026-10-20 起经小生渠道（xiaoshengapi.top）调用</strong>：<code>llm_provider</code> / <code>llm_model</code> 取值与行为不变；<code>billing.calls[].provider</code> 记为 <code>xiaosheng</code>，单价为官方价 × 0.08；小生不可用时自动改发官方（见 <a href="#llm-fallback">⑤「小生 → 官方保底」</a>），此时记为原渠道名、按官方价计费。</li>
         </ul>
         <h4 id="llm-models-7">⑥-7 MegaAI（<code>megaby</code>）</h4>
         <div class="table-wrap">
