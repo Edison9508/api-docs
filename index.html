@@ -1493,7 +1493,7 @@
           </table>
         </div>
         <ul>
-          <li>单价按 <strong>渠道×模型</strong> 键控（同一模型在不同渠道价格不同），当前已录入 36 条：API易（gpt-5.6-sol 动态分档 ≤272K / &gt;272K，USD 计价；gemini-3.8-flash）、即刻API 3 条、MegaAI 3 条、灵感鸭 3 条、联通 3 条、DeepSeek 2 条、GLM 2 条（官方价，保留作回滚）、小生 4 条（deepseek-v4-pro / deepseek-v4-flash / glm-5.3 / glm-5.3-flash，官方价 × 0.08）、STA1N 8 条（主力 gemini-3.8-flash 1 条 + 旧模型 7 条，含按次 4 条）、barael 1 条、星网AI 5 条（gemini-3.8-flash 为渠道价；GPT-6 / DeepSeek 四款按厂商官方标准价 USD 登记）；各渠道具体单价见服务端计价表。</li>
+          <li>单价按 <strong>渠道×模型</strong> 键控（同一模型在不同渠道价格不同），当前已录入 37 条：API易（gpt-5.6-sol 动态分档 ≤272K / &gt;272K，USD 计价；gemini-3.8-flash）、即刻API 3 条、MegaAI 3 条、灵感鸭 3 条、联通 3 条、DeepSeek 2 条、GLM 2 条（官方价，保留作回滚）、小生 4 条（deepseek-v4-pro / deepseek-v4-flash / glm-5.3 / glm-5.3-flash，官方价 × 0.08）、STA1N 8 条（主力 gemini-3.8-flash 1 条 + 旧模型 7 条，含按次 4 条）、barael 2 条（gemini-3.8-flash / gemini-4-argon）、星网AI 5 条（gemini-3.8-flash 为渠道价；GPT-6 / DeepSeek 四款按厂商官方标准价 USD 登记）；各渠道具体单价见服务端计价表。</li>
           <li><strong>按次计费模型</strong>（如 STA1N 的 <code>[次]…</code> 系列）：每次成功调用固定计 <code>单价 × 渠道倍率</code>，与 token 数无关，对应 call 的 <code>tier=per_call</code>；token 字段仍如实返回，仅供参考。</li>
           <li>未录入单价表的模型（如豆包、千问）<code>cost_cny</code> 为 <code>null</code>，不参与合计（<code>pricing_status=partial</code>）。</li>
           <li><strong>同步接口</strong>：<code>data.billing</code> 为本次请求全部 LLM 调用的汇总（含任务内并发执行的部分）。</li>
@@ -1596,7 +1596,7 @@
               <tr><td><code>linguanya</code></td><td>灵感鸭（lingganyaapi.com）</td><td><code>lingganya</code> / <code>lingganyaapi</code></td><td>GPT-5.6 / GPT-6、Gemini 3.8 Flash</td><td>否，须显式传</td><td><code>LINGUANYA_API_KEY</code>（Gemini 用 <code>LINGUANYA_GEMINI_API_KEY</code>）</td><td><code>ALLOW_LINGUANYA_FALLBACK</code></td></tr>
               <tr><td><code>liantong</code></td><td>联通 LIANTONG（liantongapi.com）</td><td><code>liantongapi</code> / <code>联通</code></td><td>GPT-5.6 / GPT-6、Gemini 3.8 Flash</td><td>否，须显式传</td><td><code>LIANTONG_API_KEY</code></td><td><code>ALLOW_LIANTONG_FALLBACK</code></td></tr>
               <tr><td><code>sta1n</code></td><td>STA1N（cdn.sta1n.cn，2026-10-03 新增）</td><td><code>sta1napi</code></td><td>Gemini 3.8 Flash（思考档位固定 high；旧 Claude / Thinking 模型名兼容放行）</td><td>否，须显式传</td><td><code>STA1N_API_KEY</code></td><td><code>ALLOW_STA1N_FALLBACK</code></td></tr>
-              <tr><td><code>barael</code></td><td>barael（s156.zeabur.app，2026-10-04 新增）</td><td>—</td><td>Gemini 3.8 Flash（思考档位固定 high）</td><td>否，须显式传</td><td><code>BARAEL_API_KEY</code></td><td><code>ALLOW_BARAEL_FALLBACK</code></td></tr>
+              <tr><td><code>barael</code></td><td>barael（s156.zeabur.app，2026-10-04 新增）</td><td>—</td><td>Gemini 3.8 Flash（思考档位固定 high）/ Gemini 4 Argon（上游默认思考档）</td><td>否，须显式传（<code>gemini-4-argon</code> 可省略）</td><td><code>BARAEL_API_KEY</code></td><td><code>ALLOW_BARAEL_FALLBACK</code></td></tr>
               <tr><td><code>xingwangai</code></td><td>星网AI（open.embervale.cn，2026-10-12 新增）</td><td><code>xingwang</code> / <code>embervale</code></td><td>GPT-6 / DeepSeek V4 / Gemini 3.8 Flash（每个模型含「关闭思考 / 中等思考」两档）</td><td>否，须显式传</td><td><code>XINGWANGAI_API_KEY</code></td><td><code>ALLOW_XINGWANGAI_FALLBACK</code></td></tr>
             </tbody>
           </table>
@@ -1816,7 +1816,8 @@
           <table>
             <thead><tr><th>值</th><th>说明</th></tr></thead>
             <tbody>
-              <tr><td><code>gemini-3.8-flash</code></td><td>渠道默认且唯一模型；思考档位<strong>固定为 high</strong>，不支持切换低 / 中 / 高</td></tr>
+              <tr><td><code>gemini-3.8-flash</code></td><td>渠道默认模型；思考档位<strong>固定为 high</strong>，不支持切换低 / 中 / 高</td></tr>
+              <tr><td><code>gemini-4-argon</code></td><td>2026-10-24 新增；不下发思考档位，使用上游默认档（创作类提示词下思考量接近 0）；按量输入 ¥0.44 / 输出 ¥2.2 / 缓存读 ¥0.022 每百万 tokens</td></tr>
             </tbody>
           </table>
         </div>
@@ -1826,6 +1827,7 @@
           <li>计费（按量）：输入 ¥0.135 / 输出 ¥0.675 / 缓存读 ¥0.0135 每百万 tokens。</li>
           <li><strong>不走 Google 原生端点</strong>：该渠道原生 <code>generateContent</code> 会把 Gemini 的思考内容以 <code>thought: true</code> 片段混进正文；且思考档位参数（<code>thinkingConfig</code> / <code>thinkingLevel</code>）在其原生与兼容两条路径上均无效（实测传入非法枚举值也不报错，即被网关丢弃）。服务端固定走 OpenAI 兼容端点，思考强度为渠道默认的 high。</li>
           <li>失败兜底顺序（2026-10-23 起，服务端自动执行，无需另传参数）：barael 被上游审核拦截时先改装为工具调用重发一次 → 仍失败用 <strong>STA1N · <code>gemini-3.8-flash</code>（思考档位 high）</strong> 再试一次 → 仍失败用 <strong>DeepSeek v4 Pro</strong> 再试一次 → 仍失败返回错误。带图调用（场景读图 / 场景图校验）同样按 barael → STA1N → DeepSeek v4 Pro 兜底。</li>
+          <li><code>gemini-4-argon</code> 与 <code>gemini-3.8-flash</code> 调用方式一致（OpenAI 兼容端点 + 流式 + 审核拦截工具伪装重发），失败兜底顺序同上（STA1N 兜底固定用 <code>gemini-3.8-flash</code>）；该模型名仅 barael 提供，只传 <code>llm_model=gemini-4-argon</code> 也会路由到 barael。</li>
           <li>默认不进降级链；需 <code>ALLOW_BARAEL_FALLBACK=1</code> 开启。</li>
         </ul>
 
@@ -1893,6 +1895,7 @@
               <tr><td>联通 Gemini 中等思考</td><td><code>liantong</code>（必传）</td><td><code>gemini-3.8-flash-medium</code></td></tr>
               <tr><td>STA1N Gemini 3.8 Flash（固定 high）</td><td><code>sta1n</code>（必传）</td><td><code>gemini-3.8-flash</code></td></tr>
               <tr><td>barael Gemini 3.8 Flash（固定 high）</td><td><code>barael</code>（必传）</td><td><code>gemini-3.8-flash</code></td></tr>
+              <tr><td>barael Gemini 4 Argon（上游默认档）</td><td><code>barael</code>（可省略）</td><td><code>gemini-4-argon</code></td></tr>
               <tr><td>星网AI GPT-6.1 Sol 中等思考</td><td><code>xingwangai</code>（必传）</td><td><code>openai/gpt-6.1-sol（中等思考）</code></td></tr>
               <tr><td>星网AI GPT-6 Astra 关闭思考</td><td><code>xingwangai</code>（必传）</td><td><code>openai/gpt-6-astra（关闭思考）</code></td></tr>
               <tr><td>星网AI DeepSeek V4.1 Flash 中等思考</td><td><code>xingwangai</code>（必传）</td><td><code>deepseek/deepseek-v4.1-flash（中等思考）</code></td></tr>
@@ -7437,7 +7440,7 @@
                       <div class="param-children">
                         <div class="param-node depth-3"><div class="param-row" data-depth="3"><span class="param-spacer" aria-hidden="true"></span><code class="param-name">episode_no</code><span class="type-chip type-integer">integer</span><span class="param-meaning">集号</span><span class="hint" tabindex="0" aria-label="查看备注"><span class="hint-icon">i</span><span class="hint-card"><b>episode_no</b>用于和 <code>tasks[].episodes[].episode_no</code> 对齐。</span></span></div></div>
                         <div class="param-node depth-3"><div class="param-row" data-depth="3"><span class="param-spacer" aria-hidden="true"></span><code class="param-name">episode_title</code><span class="type-chip type-string">string</span><span class="param-meaning">集标题</span><span class="hint" tabindex="0" aria-label="查看备注"><span class="hint-icon">i</span><span class="hint-card"><b>episode_title</b>来自 G1 入参；仅用于展示，不参与重试定位。</span></span></div></div>
-                    <div class="param-node depth-3"><div class="param-row" data-depth="3"><span class="param-spacer" aria-hidden="true"></span><code class="param-name">scene_vision</code><span class="type-chip type-object">object</span><span class="param-meaning">场景读图摘要（可选）</span><span class="hint" tabindex="0" aria-label="查看备注"><span class="hint-icon">i</span><span class="hint-card"><b>scene_vision</b>2026-10-22 起；仅 G1 传 <code>scene_vision_planning=true</code> 且本集有场景资产时返回。含 <code>scene_count</code>（场景数）、<code>card_count</code>（成功读出的场景数）、<code>cached_count</code>、<code>failed_count</code>、<code>no_image_count</code>、<code>fallback_count</code>（走备用渠道的场景数）、<code>mismatch_scenes</code>（图与场景名疑似不符的场景）、<code>elapsed_sec</code>；有场景未读出时附 <code>warning</code>。非阻断。</span></span></div></div>
+                    <div class="param-node depth-3"><div class="param-row" data-depth="3"><span class="param-spacer" aria-hidden="true"></span><code class="param-name">scene_vision</code><span class="type-chip type-object">object</span><span class="param-meaning">场景读图摘要（可选）</span><span class="hint" tabindex="0" aria-label="查看备注"><span class="hint-icon">i</span><span class="hint-card"><b>scene_vision</b>2026-10-22 起；仅 G1 传 <code>scene_vision_planning=true</code> 且本集有场景资产时返回。含 <code>scene_count</code>（场景数）、<code>card_count</code>（成功读出的场景数）、<code>cached_count</code>、<code>failed_count</code>、<code>no_image_count</code>、<code>fallback_count</code>（走备用渠道的场景数）、<code>mismatch_scenes</code>（图与场景名疑似不符的场景）、<code>elapsed_sec</code>；有场景未读出时附 <code>warning</code>。非阻断。<br>判断是否生效（2026-10-24 起）：<code>card_count</code> &gt; 0 表示读出的场景卡已注入本集规划；= 0 表示本集按原方式规划；<code>mismatch_scenes</code> 非空需核对场景资产。也可看服务器日志里的 <code>[开眼]</code> 行（带北京时间、任务 ID、集号）：「读图完成 … 已注入 N 张场景卡」为已生效，「读图全部失败 / 读图异常」为按原方式规划，「末帧」行给出按规划 / 回落的组数与原因。</span></span></div></div>
                         <div class="param-node depth-3">
                           <div class="param-row has-children" data-depth="3"><button type="button" class="param-toggle" aria-expanded="false" aria-label="展开或收起 scenes"></button><code class="param-name">scenes</code><span class="type-chip type-array">object[]</span><span class="param-meaning">分镜组结果</span><span class="hint" tabindex="0" aria-label="查看备注"><span class="hint-icon">i</span><span class="hint-card"><b>scenes</b>终态可消费产物；失败分镜组定位不在这里读取，统一看 <code>tasks[].episodes[].steps[]</code>。</span></span></div>
                           <div class="param-children">
