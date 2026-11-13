@@ -1488,12 +1488,12 @@
               <tr><td><code>billing.total_cost_cny</code></td><td>number</td><td>LLM 调用成本合计（元）</td></tr>
               <tr><td><code>billing.calls</code></td><td>array</td><td>每次 LLM 调用明细：<code>provider</code>（渠道 ID，取值见 <a href="#llm-providers">LLM 调用方式 · ③ 渠道总览</a>，如 deepseek/glm/apiyi/jikexin/megaby/linguanya/liantong/sta1n/barael/xingwangai/snapi/snapi0125/xiaosheng；<code>deepseek</code> / <code>glm</code> 渠道的调用 2026-10-20 起记为 <code>xiaosheng</code>，触发官方保底时仍记 <code>deepseek</code> / <code>glm</code>）、<code>model</code>、<code>input_tokens</code>、<code>output_tokens</code>、<code>cache_read_tokens</code>、<code>cache_write_tokens</code>、<code>cost_cny</code>、<code>tier</code>（计价分档：按量模型为输入长度分档；按次模型固定为 <code>per_call</code>）、<code>pricing_status</code>、<code>episode_no</code>（分镜组类模块按集归属，见下）</td></tr>
               <tr><td><code>billing.pricing_status</code></td><td>string</td><td><code>ok</code>=全部计价成功；<code>partial</code>=存在未录入单价表的渠道×模型（对应 call 的 <code>cost_cny</code> 为 <code>null</code>）；<code>no_llm_calls</code>=未发生 LLM 调用（此时不附 <code>billing</code> 字段）</td></tr>
-              <tr><td><code>billing.as_of</code></td><td>string</td><td>单价表基准日期（以服务端返回值为准，当前为 <code>2026-09-18</code>）</td></tr>
+              <tr><td><code>billing.as_of</code></td><td>string</td><td>单价表基准日期（以服务端返回值为准，当前为 <code>2026-11-13</code>）</td></tr>
             </tbody>
           </table>
         </div>
         <ul>
-          <li>单价按 <strong>渠道×模型</strong> 键控（同一模型在不同渠道价格不同），当前已录入 39 条：API易（gpt-5.6-sol 动态分档 ≤272K / &gt;272K，USD 计价；gemini-3.8-flash）、即刻API 3 条、MegaAI 3 条、灵感鸭 3 条、联通 3 条、DeepSeek 2 条、GLM 2 条（官方价，保留作回滚）、小生 4 条（deepseek-v4-pro / deepseek-v4-flash / glm-5.3 / glm-5.3-flash，官方价 × 0.08）、STA1N 8 条（主力 gemini-3.8-flash 1 条 + 旧模型 7 条，含按次 4 条）、barael 2 条（gemini-3.8-flash / gemini-4-argon）、星网AI 5 条（gemini-3.8-flash 为渠道价；GPT-6 / DeepSeek 四款按厂商官方标准价 USD 登记）、SNAPI 2 条（gpt-6.1-sol 按 0.08x / 0.125x 双倍率分别登记，CNY 计价；0.125x 为计费归属通道 snapi0125）；各渠道具体单价见服务端计价表。</li>
+          <li>单价按 <strong>渠道×模型</strong> 键控（同一模型在不同渠道价格不同），当前已录入 41 条：API易（gpt-5.6-sol 动态分档 ≤272K / &gt;272K，USD 计价；gemini-3.8-flash）、即刻API 3 条、MegaAI 3 条、灵感鸭 3 条、联通 3 条、DeepSeek 2 条、GLM 2 条（官方价，保留作回滚）、小生 4 条（deepseek-v4-pro / deepseek-v4-flash / glm-5.3 / glm-5.3-flash，官方价 × 0.08）、STA1N 9 条（主力 gemini-4-hydrogen 1 条 + gemini-3.8-flash 1 条 + 旧模型 7 条，含按次 4 条）、barael 3 条（gemini-3.8-flash / gemini-4-argon / gemini-4-hydrogen）、星网AI 5 条（gemini-3.8-flash 为渠道价；GPT-6 / DeepSeek 四款按厂商官方标准价 USD 登记）、SNAPI 2 条（gpt-6.1-sol 按 0.08x / 0.125x 双倍率分别登记，CNY 计价；0.125x 为计费归属通道 snapi0125）；各渠道具体单价见服务端计价表。</li>
           <li><strong>按次计费模型</strong>（如 STA1N 的 <code>[次]…</code> 系列）：每次成功调用固定计 <code>单价 × 渠道倍率</code>，与 token 数无关，对应 call 的 <code>tier=per_call</code>；token 字段仍如实返回，仅供参考。</li>
           <li>未录入单价表的模型（如豆包、千问）<code>cost_cny</code> 为 <code>null</code>，不参与合计（<code>pricing_status=partial</code>）。</li>
           <li><strong>同步接口</strong>：<code>data.billing</code> 为本次请求全部 LLM 调用的汇总（含任务内并发执行的部分）。</li>
@@ -1595,8 +1595,8 @@
               <tr><td><code>megaby</code></td><td>MegaAI（newapi.megabyai.cc）</td><td><code>megabyai</code> / <code>megaai</code> / <code>mega</code></td><td>GPT-5.6 / GPT-6、<code>claude-opus-5</code></td><td>否，须显式传</td><td><code>MEGA_AI_API_KEY</code></td><td><code>ALLOW_MEGABY_FALLBACK</code></td></tr>
               <tr><td><code>linguanya</code></td><td>灵感鸭（lingganyaapi.com）</td><td><code>lingganya</code> / <code>lingganyaapi</code></td><td>GPT-5.6 / GPT-6、Gemini 3.8 Flash</td><td>否，须显式传</td><td><code>LINGUANYA_API_KEY</code>（Gemini 用 <code>LINGUANYA_GEMINI_API_KEY</code>）</td><td><code>ALLOW_LINGUANYA_FALLBACK</code></td></tr>
               <tr><td><code>liantong</code></td><td>联通 LIANTONG（liantongapi.com）</td><td><code>liantongapi</code> / <code>联通</code></td><td>GPT-5.6 / GPT-6、Gemini 3.8 Flash</td><td>否，须显式传</td><td><code>LIANTONG_API_KEY</code></td><td><code>ALLOW_LIANTONG_FALLBACK</code></td></tr>
-              <tr><td><code>sta1n</code></td><td>STA1N（cdn.sta1n.cn，2026-10-03 新增）</td><td><code>sta1napi</code></td><td>Gemini 3.8 Flash（思考档位固定 high；旧 Claude / Thinking 模型名兼容放行）</td><td>否，须显式传</td><td><code>STA1N_API_KEY</code></td><td><code>ALLOW_STA1N_FALLBACK</code></td></tr>
-              <tr><td><code>barael</code></td><td>barael（s156.zeabur.app，2026-10-04 新增）</td><td>—</td><td>Gemini 3.8 Flash（思考档位固定 high）/ Gemini 4 Argon（上游默认思考档）</td><td>否，须显式传（<code>gemini-4-argon</code> 可省略）</td><td><code>BARAEL_API_KEY</code></td><td><code>ALLOW_BARAEL_FALLBACK</code></td></tr>
+              <tr><td><code>sta1n</code></td><td>STA1N（sta1n.ai，2026-10-03 新增；11-13 换域名）</td><td><code>sta1napi</code></td><td>Gemini 4 Hydrogen（默认，低/中/高三档，失败自动兜底 Flash·high）/ Gemini 3.8 Flash（思考档位固定 high；旧 Claude / Thinking 模型名兼容放行）</td><td>部分（<code>gemini-4-hydrogen*</code> 可省略）</td><td><code>STA1N_API_KEY</code></td><td><code>ALLOW_STA1N_FALLBACK</code></td></tr>
+              <tr><td><code>barael</code></td><td>barael（IP 直连 / zeabur 备用，2026-10-04 新增）</td><td>—</td><td>Gemini 3.8 Flash（固定 high）/ Gemini 4 Argon（上游默认档）/ Gemini 4 Hydrogen（三档=真实 ID：base=high/-low/-medium）</td><td>否，须显式传（<code>gemini-4-argon</code> 可省略）</td><td><code>BARAEL_API_KEY</code></td><td><code>ALLOW_BARAEL_FALLBACK</code></td></tr>
               <tr><td><code>xingwangai</code></td><td>星网AI（open.embervale.cn，2026-10-12 新增）</td><td><code>xingwang</code> / <code>embervale</code></td><td>GPT-6 / DeepSeek V4 / Gemini 3.8 Flash（每个模型含「关闭思考 / 中等思考」两档）</td><td>否，须显式传</td><td><code>XINGWANGAI_API_KEY</code></td><td><code>ALLOW_XINGWANGAI_FALLBACK</code></td></tr>
               <tr><td><code>snapi</code></td><td>SNAPI（sn-api.top，2026-11-12 新增）</td><td><code>sn-api</code></td><td>GPT-6.1 Sol（low/medium/high/xhigh/max 五档）</td><td>否，须显式传（裸名历史推断到 jikexin）</td><td><code>SNAPI_0.08x_API_KEY</code> / <code>SNAPI_0.125x_API_KEY</code>（兜底）</td><td><code>ALLOW_SNAPI_FALLBACK</code></td></tr>
             </tbody>
@@ -1621,6 +1621,8 @@
               <tr><td><code>gpt-6-*</code></td><td><code>jikexin</code></td></tr>
               <tr><td><code>gpt-6.1-sol</code> / <code>-low</code> / <code>-medium</code> / <code>-high</code> / <code>-xhigh</code> / <code>-max</code></td><td><code>jikexin</code>（历史推断）；走 SNAPI 须显式传 <code>llm_provider=snapi</code></td></tr>
               <tr><td><code>gemini-3.8-flash-high</code>（精确匹配）</td><td><code>jikexin</code></td></tr>
+              <tr><td><code>gemini-4-hydrogen</code> / <code>-low</code> / <code>-medium</code> / <code>-high</code></td><td><code>sta1n</code>（2026-11-13 起；barael 亦提供 base/-low/-medium，走 barael 须显式传 <code>llm_provider=barael</code>）</td></tr>
+              <tr><td><code>gemini-4-argon</code></td><td><code>barael</code></td></tr>
               <tr><td><code>gemini-3.8-flash</code> / <code>gemini-3.8-flash-medium</code></td><td><code>gemini</code>（API易 Gemini 原生；2026-09-18 起，此前为灵感鸭）</td></tr>
               <tr><td>其余 <code>gemini-*</code></td><td><code>gemini</code></td></tr>
               <tr><td><code>gpt-5.6-*</code> / <code>claude-*</code></td><td><code>apiyi</code></td></tr>
@@ -1793,19 +1795,22 @@
           <li><code>gpt-6-astra</code> 降档重试发生时，<code>provider_event.reasoning_effort_downgraded</code> 记录 <code>{from, to, supported}</code>。</li>
           <li><code>gemini-3.8-flash-high</code> 是即刻渠道的独立模型 ID，不要在联通渠道使用。</li>
         </ul>
-        <h4 id="llm-models-10">⑥-10 STA1N（<code>sta1n</code>，2026-10-03 新增；2026-10-21 主力模型改为 <code>gemini-3.8-flash</code>）</h4>
+        <h4 id="llm-models-10">⑥-10 STA1N（<code>sta1n</code>，2026-10-03 新增；2026-11-13 主力模型改为 <code>gemini-4-hydrogen</code>、域名换为 sta1n.ai）</h4>
         <div class="table-wrap">
           <table>
             <thead><tr><th>值</th><th>计费</th><th>单价</th></tr></thead>
             <tbody>
-              <tr><td><code>gemini-3.8-flash</code></td><td>按量</td><td>输入 ¥0.3 / 输出 ¥1.5 / 缓存读 ¥0.03 每百万 tokens（<strong>渠道默认且推荐模型</strong>）</td></tr>
+              <tr><td><code>gemini-4-hydrogen</code></td><td>按量</td><td>输入 ¥0.6 / 输出 ¥3.0 / 缓存读 ¥0.3 每百万 tokens（<strong>渠道默认且推荐模型</strong>；可挂 <code>-low</code> / <code>-medium</code> / <code>-high</code> 后缀选思考档，无后缀默认 high；档位条目同价）</td></tr>
+              <tr><td><code>gemini-3.8-flash</code></td><td>按量</td><td>输入 ¥0.3 / 输出 ¥1.5 / 缓存读 ¥0.03 每百万 tokens（思考档位固定 high）</td></tr>
             </tbody>
           </table>
         </div>
         <ul>
-          <li><strong>须显式传 <code>llm_provider=sta1n</code></strong>：<code>gemini-3.8-flash</code> 与 API易 / 灵感鸭 / 联通 / barael 重名，只传模型名会路由到 API易 Gemini 原生渠道。</li>
-          <li>行为与 barael · <code>gemini-3.8-flash</code> 一致：思考档位固定 <strong>high</strong>（服务端下发，无需另传参数）；被上游审核拦截时自动改装为工具调用重发一次，仍失败再走 DeepSeek v4 Pro 兜底。</li>
-          <li>OpenAI 兼容端点（<code>https://cdn.sta1n.cn/v1</code>），<code>json_object</code> 可用，流式接收。</li>
+          <li><code>gemini-4-hydrogen</code> 为 STA1N 独占模型，<strong>只传 <code>llm_model</code> 即可自动路由到 sta1n</strong>（含 <code>-low</code> / <code>-medium</code> / <code>-high</code> 档位条目）；<code>gemini-3.8-flash</code> 与 API易 / 灵感鸭 / 联通 / barael 重名，走 STA1N <strong>须显式传 <code>llm_provider=sta1n</code></strong>。</li>
+          <li><strong>思考档位（11-13 实测生效）</strong>：hydrogen 通过展示名后缀选档（如 <code>gemini-4-hydrogen-low</code>），服务端实际下发模型仍为基座 <code>gemini-4-hydrogen</code> + <code>reasoning_effort=low/medium/high</code>；优先级 后缀 &gt; 服务端 env &gt; 默认 high。flash 不支持后缀，固定 high。</li>
+          <li><strong>同渠道模型级兜底（11-13 起，服务端自动执行）</strong>：hydrogen 调用失败时自动改用 <strong>gemini-3.8-flash（思考 high）</strong> 重试一次（用户取消 / 结构化输出拒答除外）；仍失败再走 DeepSeek v4 Pro 兜底。主 / 兜底按各自实际模型分别计费。</li>
+          <li>行为与 barael · <code>gemini-3.8-flash</code> 一致：被上游审核拦截时自动改装为工具调用重发一次（flash / hydrogen 均适用）。</li>
+          <li>OpenAI 兼容端点（<code>https://sta1n.ai/v1</code>，2026-11-13 起，旧域名 cdn.sta1n.cn 停用），<code>json_object</code> 可用，流式接收。</li>
           <li><strong>旧模型名兼容</strong>：<code>[次][Kiro]claude-opus-5-5</code>、<code>[Kiro]claude-opus-5-5(-thinking)</code>、<code>[AN]gemini-3.8-flash-thinking</code> 等 2026-10-21 前的模型名显式传入时仍照常调用（按旧方式，不带思考档位、不做工具伪装重发），计费不变，但不再推荐使用。</li>
           <li>按次模型每次成功调用固定扣费，与 token 数无关；<code>billing.calls[].tier</code> 为 <code>per_call</code>。</li>
           <li><code>[Kiro]</code> 系列每次调用隐含约 6.7K 系统 token，可命中缓存。</li>
@@ -1813,23 +1818,25 @@
           <li>默认不进降级链；需 <code>ALLOW_STA1N_FALLBACK=1</code> 开启。</li>
         </ul>
 
-        <h4 id="llm-models-11">⑥-11 barael（<code>barael</code>，2026-10-04 新增）</h4>
+        <h4 id="llm-models-11">⑥-11 barael（<code>barael</code>，2026-10-04 新增；2026-11-13 新增 gemini-4-hydrogen 三档）</h4>
         <div class="table-wrap">
           <table>
             <thead><tr><th>值</th><th>说明</th></tr></thead>
             <tbody>
               <tr><td><code>gemini-3.8-flash</code></td><td>渠道默认模型；思考档位<strong>固定为 high</strong>，不支持切换低 / 中 / 高</td></tr>
               <tr><td><code>gemini-4-argon</code></td><td>2026-10-24 新增；不下发思考档位，使用上游默认档（创作类提示词下思考量接近 0）；按量输入 ¥0.44 / 输出 ¥2.2 / 缓存读 ¥0.022 每百万 tokens</td></tr>
+              <tr><td><code>gemini-4-hydrogen</code> / <code>-low</code> / <code>-medium</code></td><td>2026-11-13 新增；<strong>三档=上游真实模型 ID</strong>（不带后缀=high、<code>-low</code>、<code>-medium</code>；无 <code>-high</code>）；按量输入 ¥0.33 / 输出 ¥1.65 / 缓存读 ¥0.0165 每百万 tokens（各档同价）</td></tr>
             </tbody>
           </table>
         </div>
         <ul>
-          <li><strong>须显式传 <code>llm_provider=barael</code></strong>：<code>gemini-3.8-flash</code> 与 API易 Gemini 原生（<code>gemini</code>）/ 灵感鸭 / 联通重名，只传模型名会路由到 API易 Gemini 原生渠道。</li>
-          <li>走 <strong>OpenAI 兼容端点</strong>（<code>https://s156.zeabur.app/v1</code>），<code>json_object</code> 可用。</li>
-          <li>计费（按量）：输入 ¥0.135 / 输出 ¥0.675 / 缓存读 ¥0.0135 每百万 tokens。</li>
-          <li><strong>不走 Google 原生端点</strong>：该渠道原生 <code>generateContent</code> 会把 Gemini 的思考内容以 <code>thought: true</code> 片段混进正文；且思考档位参数（<code>thinkingConfig</code> / <code>thinkingLevel</code>）在其原生与兼容两条路径上均无效（实测传入非法枚举值也不报错，即被网关丢弃）。服务端固定走 OpenAI 兼容端点，思考强度为渠道默认的 high。</li>
-          <li>失败兜底顺序（2026-10-23 起，服务端自动执行，无需另传参数）：barael 被上游审核拦截时先改装为工具调用重发一次 → 仍失败用 <strong>STA1N · <code>gemini-3.8-flash</code>（思考档位 high）</strong> 再试一次 → 仍失败用 <strong>DeepSeek v4 Pro</strong> 再试一次 → 仍失败返回错误。带图调用（场景读图 / 场景图校验）同样按 barael → STA1N → DeepSeek v4 Pro 兜底。</li>
-          <li><code>gemini-4-argon</code> 与 <code>gemini-3.8-flash</code> 调用方式一致（OpenAI 兼容端点 + 流式 + 审核拦截工具伪装重发），失败兜底顺序同上（STA1N 兜底固定用 <code>gemini-3.8-flash</code>）；该模型名仅 barael 提供，只传 <code>llm_model=gemini-4-argon</code> 也会路由到 barael。</li>
+          <li><strong>须显式传 <code>llm_provider=barael</code></strong>：<code>gemini-3.8-flash</code> 与 API易 Gemini 原生（<code>gemini</code>）/ 灵感鸭 / 联通 / STA1N 的部分模型重名，只传模型名会路由到 API易 Gemini 原生渠道；<code>gemini-4-hydrogen*</code> 默认推断到 sta1n，走 barael 须显式传。</li>
+          <li>走 <strong>OpenAI 兼容端点</strong>（IP 直连 <code>http://162.216.113.130:30080/v1</code>，zeabur <code>https://s156.zeabur.app/v1</code> 备用），<code>json_object</code> 可用。</li>
+          <li>计费（按量）：flash 输入 ¥0.135 / 输出 ¥0.675 / 缓存读 ¥0.0135；hydrogen 见上表（每百万 tokens）。</li>
+          <li><strong>思考档位机制（2026-11-13 实测）</strong>：barael 的 <code>reasoning_effort</code> / <code>thinkingConfig</code> / <code>thinkingLevel</code> 参数<strong>不可调</strong>（被网关丢弃），flash/argon 思考档固定。<strong>hydrogen 的档位由上游真实模型 ID 承载</strong>（base=high、<code>-low</code>、<code>-medium</code>），服务端原样下发带后缀 ID、不剥后缀、不下发 effort（与 STA1N 的「同基座+effort」方案相反）。</li>
+          <li><strong>不走 Google 原生端点</strong>：该渠道原生 <code>generateContent</code> 会把 Gemini 的思考内容以 <code>thought: true</code> 片段混进正文。故服务端固定走 OpenAI 兼容端点。</li>
+          <li>失败兜底顺序（2026-10-23 起、2026-11-13 模型联动，服务端自动执行）：barael 被上游审核拦截时先改装为工具调用重发一次 → 仍失败用 <strong>STA1N 同模型兜底</strong>（主=<code>gemini-4-hydrogen*</code> → STA1N·<code>gemini-4-hydrogen</code>·high；主=flash/argon → STA1N·<code>gemini-3.8-flash</code>·high）再试一次 → 仍失败用 <strong>DeepSeek v4 Pro</strong> 再试一次 → 仍失败返回错误。带图调用（场景读图 / 场景图校验）同口径联动。</li>
+          <li><code>gemini-4-argon</code> 与 <code>gemini-3.8-flash</code> 调用方式一致（OpenAI 兼容端点 + 流式 + 审核拦截工具伪装重发）；该模型名仅 barael 提供，只传 <code>llm_model=gemini-4-argon</code> 也会路由到 barael。</li>
           <li>默认不进降级链；需 <code>ALLOW_BARAEL_FALLBACK=1</code> 开启。</li>
         </ul>
 
@@ -1914,9 +1921,13 @@
               <tr><td>MegaAI GPT-5.6 Luna</td><td><code>megaby</code>（必传）</td><td><code>gpt-5.6-luna</code></td></tr>
               <tr><td>灵感鸭 Gemini 3.8 Flash</td><td><code>linguanya</code>（必传）</td><td><code>gemini-3.8-flash</code></td></tr>
               <tr><td>联通 Gemini 中等思考</td><td><code>liantong</code>（必传）</td><td><code>gemini-3.8-flash-medium</code></td></tr>
+              <tr><td>STA1N Gemini 4 Hydrogen（默认 high）</td><td><code>sta1n</code>（可省略）</td><td><code>gemini-4-hydrogen</code></td></tr>
+              <tr><td>STA1N Gemini 4 Hydrogen 低思考</td><td><code>sta1n</code>（可省略）</td><td><code>gemini-4-hydrogen-low</code></td></tr>
               <tr><td>STA1N Gemini 3.8 Flash（固定 high）</td><td><code>sta1n</code>（必传）</td><td><code>gemini-3.8-flash</code></td></tr>
               <tr><td>barael Gemini 3.8 Flash（固定 high）</td><td><code>barael</code>（必传）</td><td><code>gemini-3.8-flash</code></td></tr>
               <tr><td>barael Gemini 4 Argon（上游默认档）</td><td><code>barael</code>（可省略）</td><td><code>gemini-4-argon</code></td></tr>
+              <tr><td>barael Gemini 4 Hydrogen（base=high）</td><td><code>barael</code>（必传）</td><td><code>gemini-4-hydrogen</code></td></tr>
+              <tr><td>barael Gemini 4 Hydrogen 低思考</td><td><code>barael</code>（必传）</td><td><code>gemini-4-hydrogen-low</code></td></tr>
               <tr><td>星网AI GPT-6.1 Sol 中等思考</td><td><code>xingwangai</code>（必传）</td><td><code>openai/gpt-6.1-sol（中等思考）</code></td></tr>
               <tr><td>SNAPI GPT-6.1 Sol 默认 medium</td><td><code>snapi</code>（必传）</td><td><code>gpt-6.1-sol</code></td></tr>
               <tr><td>SNAPI GPT-6.1 Sol 深度思考 xhigh</td><td><code>snapi</code>（必传）</td><td><code>gpt-6.1-sol-xhigh</code></td></tr>
